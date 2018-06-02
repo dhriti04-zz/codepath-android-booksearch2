@@ -1,5 +1,6 @@
 package com.codepath.android.booksearch.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -86,6 +87,17 @@ public class BookListActivity extends AppCompatActivity {
                 super.onFailure(statusCode, headers, responseString, throwable);
             }
         });
+    }
+
+    public void showDetailsForBook(Book selectedBook) {
+        // create an intent to go to the Detail activity
+        Intent i = new Intent(this, BookDetailActivity.class);
+
+        // attach the parcelable book into the intent
+        i.putExtra("bookObject", selectedBook);
+
+        // fire the intent to launch the Detail activity
+        startActivity(i);
     }
 
     @Override

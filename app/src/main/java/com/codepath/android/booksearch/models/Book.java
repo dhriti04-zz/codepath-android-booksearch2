@@ -1,5 +1,7 @@
 package com.codepath.android.booksearch.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -8,10 +10,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Book {
+public class Book implements Parcelable {
     private String openLibraryId;
     private String author;
     private String title;
+    private String publisher;
 
     public String getOpenLibraryId() {
         return openLibraryId;
@@ -23,6 +26,10 @@ public class Book {
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getPublisher() {
+        return publisher;
     }
 
     // Get book cover from covers API
@@ -44,6 +51,7 @@ public class Book {
             }
             book.title = jsonObject.has("title_suggest") ? jsonObject.getString("title_suggest") : "";
             book.author = getAuthor(jsonObject);
+            book.publisher = getPublisher(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -62,6 +70,21 @@ public class Book {
                 authorStrings[i] = authors.getString(i);
             }
             return TextUtils.join(", ", authorStrings);
+        } catch (JSONException e) {
+            return "";
+        }
+    }
+
+    // Return comma separated publisher list when there is more than one publisher
+    private static String getPublisher(final JSONObject jsonObject) {
+        try {
+            final JSONArray publishers = jsonObject.getJSONArray("publisher");
+            int numPublishers = publishers.length();
+            final String[] publisherStrings = new String[numPublishers];
+            for (int i = 0; i < numPublishers; ++i) {
+                publisherStrings[i] = publishers.getString(i);
+            }
+            return TextUtils.join(", ", publisherStrings);
         } catch (JSONException e) {
             return "";
         }
@@ -87,4 +110,40 @@ public class Book {
         }
         return books;
     }
+
+
+    public Book() {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.openLibraryId);
+        dest.writeString(this.author);
+        dest.writeString(this.title);
+        dest.writeString(this.publisher);
+    }
+
+    protected Book(Parcel in) {
+        this.openLibraryId = in.readString();
+        this.author = in.readString();
+        this.title = in.readString();
+        this.publisher = in.readString();
+    }
+
+    public static final Creator<Book> CREATOR = new Creator<Book>() {
+        @Override
+        public Book createFromParcel(Parcel source) {
+            return new Book(source);
+        }
+
+        @Override
+        public Book[] newArray(int size) {
+            return new Book[size];
+        }
+    };
 }

@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.codepath.android.booksearch.GlideApp;
-import com.codepath.android.booksearch.MyAppGlideModule;
 import com.codepath.android.booksearch.R;
+import com.codepath.android.booksearch.activities.BookListActivity;
 import com.codepath.android.booksearch.models.Book;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
     private Context mContext;
 
     // View lookup cache
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView ivCover;
         public TextView tvTitle;
         public TextView tvAuthor;
@@ -36,6 +36,21 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
             ivCover = (ImageView)itemView.findViewById(R.id.ivBookCover);
             tvTitle = (TextView)itemView.findViewById(R.id.tvTitle);
             tvAuthor = (TextView)itemView.findViewById(R.id.tvAuthor);
+
+            itemView.setOnClickListener(this);
+        }
+
+        // Handles the row being being clicked
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition(); // gets item position
+            if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
+
+                BookListActivity activity = (BookListActivity) mContext;
+                activity.showDetailsForBook(mBooks.get(position));
+
+                Toast.makeText(mContext, "TEST!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
