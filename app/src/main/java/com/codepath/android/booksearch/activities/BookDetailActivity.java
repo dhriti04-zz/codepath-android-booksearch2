@@ -131,8 +131,9 @@ public class BookDetailActivity extends AppCompatActivity {
         // Construct share intent as described above based on bitmap
         shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, tvTitle.getText());
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-        shareIntent.setType("image/*");
+        shareIntent.setType("*/*");
     }
 
     // Attaches the share intent to the share menu item provider
